@@ -13,7 +13,4 @@ app.get("/",(req,res)=>{
     res.send("Welcome to the AI Text Generation API");
 })
 app.post("/text",generate);
-app.listen(process.env.PORT || 3000, () => {  
-  console.log("Server is running on port " + (process.env.PORT || 3000));
-});
 export const handler = serverless(app);
