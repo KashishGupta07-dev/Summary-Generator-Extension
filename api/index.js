@@ -13,4 +13,4 @@ app.get("/",(req,res)=>{
     res.send("Welcome to the AI Text Generation API");
 })
 app.post("/text",generate);
-export const handler = serverless(app);
+export default serverless(app);
