@@ -30,7 +30,9 @@ export default async function generate(req, res) {
     const file = req.file;
     if (file) {
       const pdfExtract = new PDFExtract();
-      const options = {};
+      const options = {
+        disableWorker: true,
+      };
       try {
         const result = await pdfExtract.extractBuffer(file.buffer, options);
         const pagesText = result.pages.map((page) =>
