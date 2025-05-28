@@ -42,7 +42,7 @@ export default async function generate(req, res) {
         console.error("Error extracting PDF text:", error);
         return res.status(500).json({
           success: false,
-          message: "Error extracting text from PDF file.",
+          message: `Error extracting text from PDF file.${error.message}`,
         });
       }
     }
