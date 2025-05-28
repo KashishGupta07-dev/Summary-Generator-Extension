@@ -47,6 +47,7 @@ export default async function generate(req, res) {
       }
     }
     const cleanText = text.replace(/\s+/g, " ").trim();
+    console.log(cleanText);
     const chunks = splitIntoChunks(cleanText, 4000);
     const summaries = [];
     for (const chunk of chunks) {
