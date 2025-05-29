@@ -1,7 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 dotenv.config();
-import { PDFExtract } from "pdf.js-extract";
+import {createRequire} from "node:module";
+const require = createRequire(import.meta.url);
+const pdfParse = require("pdf-parse");
 const ai = new GoogleGenAI({ apiKey: process.env.APIKEY });
 function splitIntoChunks(text, maxChunkSize = 4000) {
   const chunks = [];
@@ -23,35 +25,26 @@ function splitIntoChunks(text, maxChunkSize = 4000) {
 
   return chunks;
 }
-
 export default async function generate(req, res) {
   try {
     let text = req.body.text;
     const file = req.file;
     if (file) {
-      const pdfExtract = new PDFExtract();
-      const options = {
-        disableWorker: true,
-      };
-      try {
-        const result = await pdfExtract.extractBuffer(file.buffer, options);
-        const pagesText = result.pages.map((page) =>
-          page.content.map((item) => item.str).join(" ")
-        );
-        const fullText = pagesText.join("\n\n");
-        text = fullText;
-      } catch (error) {
-        console.error("Error extracting PDF text:", error);
+      try{
+        const data = await pdfParse(file.buffer);
+        text = data.text;
+      }catch(error){
+        console.error("Error parsing PDF file:", error);
         return res.status(500).json({
           success: false,
-          message: `Error extracting text from PDF file.${error.message}`,
+          message: `Error parsing PDF file.${error.message}`,
         });
       }
     }
     const cleanText = text.replace(/\s+/g, " ").trim();
-    console.log(cleanText);
     const chunks = splitIntoChunks(cleanText, 4000);
     const summaries = [];
+
     for (const chunk of chunks) {
       const res = await ai.models.generateContent({
         model: "gemini-2.0-flash",
