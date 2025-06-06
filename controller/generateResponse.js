@@ -5,6 +5,7 @@ import {createRequire} from "node:module";
 const require = createRequire(import.meta.url);
 const pdfParse = require("pdf-parse");
 const ai = new GoogleGenAI({ apiKey: process.env.APIKEY });
+import {YoutubeTranscript} from "youtube-transcript";
 function splitIntoChunks(text, maxChunkSize = 4000) {
   const chunks = [];
   let start = 0;
@@ -29,6 +30,7 @@ export default async function generate(req, res) {
   try {
     let text = req.body.text;
     const file = req.file;
+    const url = req.body.url;
     if (file) {
       try{
         const data = await pdfParse(file.buffer);
@@ -41,10 +43,23 @@ export default async function generate(req, res) {
         });
       }
     }
+    if(text.length === 0 && url.includes("youtube.com/watch?v=")){
+      try{
+        while(true){
+          const data = await YoutubeTranscript.fetchTranscript(url);
+          text = data.map(item => item.text).join(" ");
+          if(text.length > 0) break;
+        }
+      }catch(error){
+        return res.status(500).json({
+          success: false,
+          message: `Error fetching YouTube transcript: ${error.message}`,
+        })
+      }
+    }
     const cleanText = text.replace(/\s+/g, " ").trim();
     const chunks = splitIntoChunks(cleanText, 4000);
     const summaries = [];
-
     for (const chunk of chunks) {
       const res = await ai.models.generateContent({
         model: "gemini-2.0-flash",
