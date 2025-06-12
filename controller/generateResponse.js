@@ -43,7 +43,7 @@ export default async function generate(req, res) {
         });
       }
     }
-    if(text.length === 0 && url.includes("youtube.com/watch?v=")){
+    if(text.length === 0 && url.length > 0){
       try{
         while(true){
           const data = await YoutubeTranscript.fetchTranscript(url);
