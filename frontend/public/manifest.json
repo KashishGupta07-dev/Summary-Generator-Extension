@@ -3,6 +3,7 @@
   "name": "Summary Generator",
   "version": "1.1",
   "permissions": ["scripting", "activeTab", "storage","tabs"],
+  "description" : "Summary Generator is a Chrome extension that generates summaries for web pages, PDFs, and YouTube videos using AI.",
   "host_permissions": ["<all_urls>"],
   "icons":{
     "16": "icon16.png",
