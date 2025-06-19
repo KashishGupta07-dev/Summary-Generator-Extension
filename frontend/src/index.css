@@ -1,1 +1,107 @@
 @import "tailwindcss";
+
+.light-theme {
+  @apply bg-white text-black;
+}
+
+.dark-theme {
+  @apply bg-zinc-900 text-white;
+}
+
+.container {
+  @apply w-[400px] h-[500px] p-5 rounded-lg shadow-md transition-all;
+}
+
+.header {
+  @apply flex justify-between items-center mb-4;
+}
+
+.title {
+  @apply font-bold text-lg;
+}
+
+.theme-toggle {
+  @apply p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-800 transition;
+}
+
+.actions {
+  @apply flex flex-col gap-3;
+}
+
+.btn {
+  @apply text-white p-2 rounded transition;
+}
+
+.btn.web {
+  @apply bg-blue-600 hover:bg-blue-700;
+}
+
+.btn.pdf {
+  @apply bg-green-600 hover:bg-green-700;
+}
+
+.btn.yt {
+  @apply bg-red-600 hover:bg-red-700;
+}
+
+.loader {
+  @apply flex justify-center items-center mt-6;
+}
+
+.output {
+  @apply mt-4 overflow-y-auto p-3 rounded border;
+  height: 400px; 
+}
+
+.light-theme .output {
+  @apply bg-white border-zinc-300 text-black;
+}
+
+.dark-theme .output {
+  @apply bg-zinc-800 border-zinc-700 text-white;
+}
+
+.label {
+  @apply font-semibold mb-2;
+}
+
+.output :is(p, ul, ol, li, strong, em, code) {
+  @apply text-sm leading-relaxed text-left;
+}
+
+.output strong {
+  @apply font-semibold;
+}
+
+.output p {
+  @apply mb-2;
+}
+
+.output ul {
+  @apply list-disc pl-5 mb-2;
+}
+
+.output ol {
+  @apply list-decimal pl-5 mb-2;
+}
+
+.output li {
+  @apply mb-1;
+}
+
+.output::-webkit-scrollbar {
+  width: 6px;
+}
+
+.output::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.output::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 3px;
+}
+
+.output::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
