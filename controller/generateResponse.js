@@ -1,10 +1,10 @@
-import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 dotenv.config();
 import { createRequire } from "node:module";
+import Groq from "groq-sdk";
+const client = new Groq({ apiKey: process.env.APIKEY });
 const require = createRequire(import.meta.url);
 const pdfParse = require("pdf-parse");
-const ai = new GoogleGenAI({ apiKey: process.env.APIKEY });
 import puppeteer from "puppeteer-core";
 function splitIntoChunks(text, maxChunkSize = 4000) {
   const chunks = [];
@@ -91,21 +91,31 @@ export default async function generate(req, res) {
     const chunks = splitIntoChunks(cleanText, 4000);
     const summaries = [];
     for (const chunk of chunks) {
-      const res = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: `Summarize the following text with focus on important details only: ${chunk}`,
+      const res = await client.chat.completions.create({
+        model: "llama-3.1-8b-instant",
+        messages: [
+          {
+            role: "user",
+            content: `Summarize the following text with focus on important details only: ${chunk}`,
+          },
+        ],
       });
-      summaries.push(res.text);
+      summaries.push(res.choices[0].message.content);
     }
-    const finalSummary = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: `Give Summary In points very nice and clean and cover each and everything properly\n${summaries.join(
-        "\n"
-      )}`,
+    const finalSummary = await client.chat.completions.create({
+      model: "llama-3.1-8b-instant",
+      messages: [
+        {
+          role: "user",
+          content: `Give Summary In points very nice and clean and cover each and everything properly\n${summaries.join(
+            "\n"
+          )}`,
+        },
+      ],
     });
     return res.status(200).json({
       successs: true,
-      message: finalSummary.text,
+      message: finalSummary.choices[0].message.content,
     });
   } catch (error) {
     console.log(error);
